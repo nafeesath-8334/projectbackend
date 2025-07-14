@@ -1,5 +1,5 @@
 const express = require('express');
-const { register, login, addFolder, getFolder, addBokmrks, getBokmrks, getUser, editFolder, forgotPswd, resetPassword, deleteFolder, editUser, editBokmark, deleteBokmrk,  } = require('../controller/controller');
+const { register, login, addFolder, getFolder, addBokmrks, getBokmrks, getUser, editFolder, forgotPswd, resetPassword, deleteFolder, editUser, editBokmark, deleteBokmrk, searchItem,  } = require('../controller/controller');
 const jwtMiddleware =require('../middleware/jwtMiddleware')
 const multer = require("multer");
 const upload = multer();
@@ -17,7 +17,7 @@ router.get('/getFolder/:userId/',getFolder)
   router.post('/resetPassword/:token',resetPassword)
  router.post('/editFolder',editFolder)
 router.delete('/deleteFolder',deleteFolder)
-router.put("/editBokmrk/:bokmrkId/",jwtMiddleware,editBokmark)
+router.put("/editBokmrk/:bokmrkId/",jwtMiddleware,upload.none(),editBokmark)
 router.delete('/deleteBokmrk', deleteBokmrk);
 
 
