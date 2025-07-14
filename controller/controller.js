@@ -118,7 +118,7 @@ console.log("one")
     }
 }
 /*EDIT USER DETAILS */
-exports.editUserDetails = async (req, res) => {
+exports.editUser = async (req, res) => {
     try {
 
         const userId = Number(req.params.userId);
@@ -269,6 +269,42 @@ exports.getBokmrks = async (req, res) => {
         res.status(500).json({ error: "Failed to fetch folders" });
     }
 };
+
+
+/* EDIT BOOKMARK */
+
+
+
+exports.editBokmark = async (req, res) => {
+    if (!req.body) {
+    return res.status(400).json({ message: "Missing request body" });
+  }
+  const { bokmrkId } = req.params;
+  const { folderId, userId, url, title, description, thumbnail } = req.body;
+
+  try {
+    const updatedData = await bokmrk.findOneAndUpdate(
+      { bokmrkId },
+      { $set: { folderId, userId, url, title, description, thumbnail } },
+      { new: true }
+    );
+
+    if (!updatedData) {
+      return res.status(404).json({ message: "Bookmark not found" });
+    }
+
+    return res.status(200).json({
+      message: "Bookmark updated successfully",
+      data: updatedData,
+    });
+  } catch (error) {
+    console.error("Error updating bookmark:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
+
 /* EDIT FOLDER NAME */
 
 exports.editFolder = async (req, res) => {
@@ -385,28 +421,24 @@ exports.resetPassword = async (req, res) => {
 }
 
 
-// exports.removeFromFavorites = async (req, res) => {
-//     try {
-//         const userId = req.body.userId;
-//         const adId = Number(req.body.adId);
-//         console.log("userid", userId, "addid", adId)
+exports.deleteBokmrk = async (req, res) => {
+//   const { bokmrkId } = req.params;
+   const { userId,bokmrkId } = req.body; // if you need to validate user
 
-//         const existingUser = await user.findOne({ userId: userId });
-//         if (!existingUser) {
-//             return res.status(404).json({ message: 'User not found' });
-//         }
-        
-//         existingUser.favorites = existingUser.favorites.filter(
-//             (id)=>id !== adId
-//         );
-//         await existingUser.save();
+  try {
+    const deleted = await bokmrk.findOneAndDelete({ bokmrkId,userId });
 
-//         res.status(200).json({ message: 'Product removed from favorites' });
-//     } catch (error) {
-//         console.error('Error removing from favorites:', error);
-//         res.status(500).json({ message: 'Server error', error: error.message });
-//     }
-// };
+    if (!deleted) {
+      return res.status(404).json({ message: "Bookmark not found" });
+    }
+
+    return res.status(200).json({ message: "Bookmark deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting bookmark:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 
 
 
